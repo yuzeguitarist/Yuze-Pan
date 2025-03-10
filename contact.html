@@ -57,5 +57,80 @@
     <!-- 脚本 -->
     <script src="static/js/player.js"></script>
     <script src="static/js/protection.js"></script>
+    <script>
+        // 移动端导航栏滑动功能
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查是否为移动设备(屏幕宽度小于480px)
+            const isMobile = window.innerWidth < 480;
+            
+            if (isMobile) {
+                const navMenu = document.querySelector('.nav-menu');
+                if (navMenu) {
+                    // 获取当前活动项
+                    const activeItem = navMenu.querySelector('.nav-item.active');
+                    
+                    // 如果有活动项,将其滚动到可视区域中间
+                    if (activeItem) {
+                        setTimeout(() => {
+                            const navMenuWidth = navMenu.offsetWidth;
+                            const activeItemLeft = activeItem.offsetLeft;
+                            const activeItemWidth = activeItem.offsetWidth;
+                            
+                            // 计算要滚动的位置,使活动项居中
+                            const scrollPosition = activeItemLeft - (navMenuWidth / 2) + (activeItemWidth / 2);
+                            
+                            // 平滑滚动到该位置
+                            navMenu.scrollTo({
+                                left: Math.max(0, scrollPosition),
+                                behavior: 'smooth'
+                            });
+                        }, 100);
+                    }
+                    
+                    // 添加拖动滚动功能
+                    let isDown = false;
+                    let startX;
+                    let scrollLeft;
+                    
+                    navMenu.addEventListener('mousedown', (e) => {
+                        isDown = true;
+                        navMenu.classList.add('grabbing');
+                        startX = e.pageX - navMenu.offsetLeft;
+                        scrollLeft = navMenu.scrollLeft;
+                    });
+                    
+                    navMenu.addEventListener('mouseleave', () => {
+                        isDown = false;
+                        navMenu.classList.remove('grabbing');
+                    });
+                    
+                    navMenu.addEventListener('mouseup', () => {
+                        isDown = false;
+                        navMenu.classList.remove('grabbing');
+                    });
+                    
+                    navMenu.addEventListener('mousemove', (e) => {
+                        if (!isDown) return;
+                        e.preventDefault();
+                        const x = e.pageX - navMenu.offsetLeft;
+                        const walk = (x - startX) * 2; // 滚动速度
+                        navMenu.scrollLeft = scrollLeft - walk;
+                    });
+                    
+                    // 触摸事件支持
+                    navMenu.addEventListener('touchstart', (e) => {
+                        startX = e.touches[0].pageX - navMenu.offsetLeft;
+                        scrollLeft = navMenu.scrollLeft;
+                    }, { passive: true });
+                    
+                    navMenu.addEventListener('touchmove', (e) => {
+                        const x = e.touches[0].pageX - navMenu.offsetLeft;
+                        const walk = (x - startX) * 2;
+                        navMenu.scrollLeft = scrollLeft - walk;
+                    }, { passive: true });
+                }
+            }
+        });
+    </script>
 </body>
 </html> 
