@@ -4,7 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>Video - Yuze Pan | 古典吉他演奏家</title>
+    
+    <!-- 预加载样式和字体,提升加载速度 -->
+    <link rel="preload" href="static/css/main.css" as="style">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&display=swap" as="style">
+    
+    <!-- 阻止广告请求错误 -->
+    <script>
+        // 屏蔽YouTube相关的资源加载错误
+        window.addEventListener('error', function(e) {
+            if (e.target && e.target.src && 
+                (e.target.src.includes('doubleclick.net') || 
+                 e.target.src.includes('ad_status.js') ||
+                 e.target.src.includes('googleadservices.com'))) {
+                // 阻止错误事件传播
+                e.preventDefault();
+                e.stopPropagation();
+                // 移除错误元素
+                if (e.target.parentNode) {
+                    e.target.parentNode.removeChild(e.target);
+                }
+                return true;
+            }
+        }, true);
+    </script>
+    
     <link href="static/css/main.css" rel="stylesheet">
     <link href="static/css/protection.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&display=swap" rel="stylesheet">
@@ -64,24 +90,71 @@
         // YouTube播放器实例
         let youtubePlayer;
         
+        // 检测是否在本地开发环境
+        const isLocalhost = window.location.hostname === 'localhost' || 
+                            window.location.hostname === '127.0.0.1';
+        
+        // 获取当前域名作为origin参数
+        const currentOrigin = window.location.protocol + '//' + window.location.hostname + 
+                            (window.location.port ? ':' + window.location.port : '');
+        
         // 当YouTube API加载完成后创建播放器
         function onYouTubeIframeAPIReady() {
-            youtubePlayer = new YT.Player('youtube-player', {
-                videoId: '7NrO3vBjsos', // 视频ID
-                playerVars: {
-                    rel: 0, // 不显示相关视频
-                    modestbranding: 1, // 隐藏YouTube徽标
-                    showinfo: 0, // 隐藏视频标题和上传者信息
-                    fs: 1, // 允许全屏
-                    playsinline: 1, // 在iOS上支持行内播放
-                    autoplay: 0, // 不自动播放
-                    controls: 1 // 显示播放控件
-                },
-                events: {
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange
+            try {
+                youtubePlayer = new YT.Player('youtube-player', {
+                    videoId: '7NrO3vBjsos', // 视频ID
+                    playerVars: {
+                        rel: 0, // 不显示相关视频
+                        modestbranding: 1, // 隐藏YouTube徽标
+                        showinfo: 0, // 隐藏视频标题和上传者信息
+                        fs: 1, // 允许全屏
+                        playsinline: 1, // 在iOS上支持行内播放
+                        autoplay: 0, // 不自动播放
+                        controls: 1, // 显示播放控件
+                        origin: currentOrigin // 设置正确的域名源
+                    },
+                    events: {
+                        'onReady': onPlayerReady,
+                        'onStateChange': onPlayerStateChange,
+                        'onError': onPlayerError
+                    }
+                });
+                
+                // 在本地环境中屏蔽控制台警告
+                if (isLocalhost) {
+                    // 重写console.warn来过滤YouTube API警告
+                    const originalWarn = console.warn;
+                    console.warn = function(...args) {
+                        if (args[0] && typeof args[0] === 'string' && 
+                            (args[0].includes('postMessage') || 
+                             args[0].includes('YouTube') || 
+                             args[0].includes('iframe'))) {
+                            // 忽略YouTube相关警告
+                            return;
+                        }
+                        originalWarn.apply(console, args);
+                    };
                 }
-            });
+            } catch (error) {
+                console.error('YouTube播放器初始化失败:', error);
+            }
+        }
+        
+        // 播放器错误处理
+        function onPlayerError(event) {
+            console.error('YouTube播放器错误:', event.data);
+            document.querySelector('.video-loading').style.display = 'none';
+            
+            // 显示友好的错误信息
+            const playerDiv = document.getElementById('youtube-player');
+            if (playerDiv) {
+                playerDiv.innerHTML = `
+                    <div style="padding: 20px; text-align: center; color: white;">
+                        <p>视频加载失败.请稍后再试.</p>
+                        <p>错误代码: ${event.data}</p>
+                    </div>
+                `;
+            }
         }
         
         // 播放器就绪时
@@ -96,11 +169,15 @@
                     
                     // 检查播放器状态并切换
                     if (youtubePlayer && youtubePlayer.getPlayerState) {
-                        const state = youtubePlayer.getPlayerState();
-                        if (state === YT.PlayerState.PLAYING) {
-                            youtubePlayer.pauseVideo();
-                        } else {
-                            youtubePlayer.playVideo();
+                        try {
+                            const state = youtubePlayer.getPlayerState();
+                            if (state === YT.PlayerState.PLAYING) {
+                                youtubePlayer.pauseVideo();
+                            } else {
+                                youtubePlayer.playVideo();
+                            }
+                        } catch (error) {
+                            console.error('控制视频播放/暂停时出错:', error);
                         }
                     }
                     
