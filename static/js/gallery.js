@@ -2,7 +2,7 @@
  * 图片库功能
  * 包含图片灯箱效果和导航功能
  */
-document。addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
     // 初始化灯箱
     initLightbox();
     
@@ -77,8 +77,8 @@ const galleryCategories = [
         images: [
             {
                 id: 7,
-                src: 'static/images/gallery/Judicael Perroy\'s masterclass, Changsha, Hunan, China.jpg',
-                thumbnail: 'static/images/gallery/Judicael Perroy\'s masterclass, Changsha, Hunan, China.jpg',
+                src: 'static/images/gallery/judicael_perroy_masterclass_changsha_hunan_china.jpg',
+                thumbnail: 'static/images/gallery/judicael_perroy_masterclass_changsha_hunan_china.jpg',
                 title: 'Judicael Perroy大师课',
                 description: '在湖南长沙参加国际知名吉他演奏家Judicael Perroy的大师课'
             },
@@ -423,52 +423,110 @@ function addTouchSupport() {
 let currentImageId = null;
 
 /**
- * 打开灯箱显示指定图片
+ * 打开灯箱并显示特定图片
+ * @param {string} imageId - 要显示的图片ID
  */
 function openLightbox(imageId) {
-    currentImageId = imageId;
-    const item = galleryData.find(item => item.id === imageId);
+    const items = galleryData.flatMap(category => category.items);
+    const item = items.find(item => item.id === imageId);
     
-    if (!item) return;
+    if (!item) {
+        console.error('未找到图片:', imageId);
+        return;
+    }
     
-    const lightbox = document.getElementById('lightbox');
+    currentImageIndex = items.findIndex(item => item.id === imageId);
+    
+    const lightbox = document.querySelector('.lightbox');
     const image = lightbox.querySelector('.lightbox-image');
     const caption = lightbox.querySelector('.lightbox-caption');
     
-    // 设置加载状态
+    // 重置灯箱状态
+    image.src = '';
+    image.alt = '';
     image.classList.add('loading');
+    caption.textContent = '加载中...';
     
-    // 预加载图片
+    // 预加载图片以确保显示前已加载完成
     const preloadImage = new Image();
-    preloadImage.src = item.src;
-    preloadImage.onload = function() {
-        // 设置图片和说明
-        image.src = item.src;
-        image.alt = item.title;
-        image.classList.remove('loading');
-        caption.textContent = `${item.title} - ${item.description}`;
+    let retryCount = 0;
+    const maxRetries = 3;
+    
+    const tryLoadImage = () => {
+        preloadImage.src = item.src;
         
-        // 显示灯箱
-        lightbox.classList.add('active');
-        lightbox.setAttribute('aria-hidden', 'false');
+        preloadImage.onload = function() {
+            image.src = item.src;
+            image.alt = item.alt || item.title;
+            image.classList.remove('loading');
+            caption.textContent = item.title;
+            lightbox.classList.add('active');
+            lightbox.setAttribute('aria-hidden', 'false');
+            
+            // 为了可访问性,将焦点转移到关闭按钮
+            setTimeout(() => {
+                lightbox.querySelector('.lightbox-close').focus();
+            }, 100);
+        };
         
-        // 禁止滚动
-        document.body.style.overflow = 'hidden';
-        
-        // 设置焦点
-        setTimeout(() => {
-            lightbox.querySelector('.lightbox-close').focus();
-        }, 100);
+        preloadImage.onerror = function() {
+            retryCount++;
+            console.warn(`图片加载失败 (${retryCount}/${maxRetries}):`, item.src);
+            
+            if (retryCount < maxRetries) {
+                // 尝试使用不同的URL编码方式重试
+                let retrySrc = item.src;
+                
+                // 首先尝试解码然后重新编码URL
+                try {
+                    const decodedPath = decodeURIComponent(item.src);
+                    retrySrc = encodeURI(decodedPath);
+                } catch (e) {
+                    console.error('URL编码/解码错误:', e);
+                }
+                
+                if (retrySrc !== item.src) {
+                    item.src = retrySrc;
+                    setTimeout(tryLoadImage, 500); // 延迟500ms后重试
+                    return;
+                }
+                
+                // 如果文件扩展名是大写的JPG,尝试使用小写的jpg
+                if (item.src.endsWith('.JPG')) {
+                    item.src = item.src.replace(/\.JPG$/, '.jpg');
+                    setTimeout(tryLoadImage, 500);
+                    return;
+                }
+                
+                // 尝试替换空格为下划线
+                if (item.src.includes(' ')) {
+                    item.src = item.src.replace(/ /g, '_');
+                    setTimeout(tryLoadImage, 500);
+                    return;
+                }
+                
+                // 所有重试方法都尝试过,但仍然失败
+                setTimeout(tryLoadImage, 1000); // 再等待1秒后重试
+            } else {
+                // 达到最大重试次数,显示错误信息
+                image.classList.remove('loading');
+                caption.textContent = `${item.title} - 图片加载失败`;
+                lightbox.classList.add('active');
+                lightbox.setAttribute('aria-hidden', 'false');
+                
+                // 为了可访问性,将焦点转移到关闭按钮
+                setTimeout(() => {
+                    lightbox.querySelector('.lightbox-close').focus();
+                }, 100);
+                
+                // 记录日志以便调试
+                console.error('达到最大重试次数,图片加载失败:', item.src);
+            }
+        };
     };
     
-    preloadImage.onerror = function() {
-        console.error('图片加载失败:', item.src);
-        image.classList.remove('loading');
-        // 如果加载失败,也打开灯箱,只是显示错误信息
-        caption.textContent = `${item.title} - 图片加载失败`;
-        lightbox.classList.add('active');
-        lightbox.setAttribute('aria-hidden', 'false');
-    };
+    // 开始加载图片
+    tryLoadImage();
 }
 
 /**
