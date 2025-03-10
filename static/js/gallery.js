@@ -2,7 +2,7 @@
  * 图片库功能
  * 包含图片灯箱效果和导航功能
  */
-document.addEventListener('DOMContentLoaded', function() {
+document。addEventListener('DOMContentLoaded', function() {
     // 初始化灯箱
     initLightbox();
     
@@ -84,8 +84,8 @@ const galleryCategories = [
             },
             {
                 id: 8,
-                src: 'static/images/gallery/Photo with Professor Judicael Perroy, Changsha, Hunan, China.JPG',
-                thumbnail: 'static/images/gallery/Photo with Professor Judicael Perroy, Changsha, Hunan, China.JPG',
+                src: 'static/images/gallery/photo_with_professor_judicael_perroy_changsha_hunan_china.jpg',
+                thumbnail: 'static/images/gallery/photo_with_professor_judicael_perroy_changsha_hunan_china.jpg',
                 title: '与Judicael Perroy教授合影',
                 description: '在湖南长沙与国际著名吉他大师Judicael Perroy的合影'
             },
