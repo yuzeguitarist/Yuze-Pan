@@ -13,7 +13,7 @@ body {
     -o-user-drag: none;
 }
 
-/* 保持某些元素可选中（如输入框） */
+/* 保持某些元素可选中(如输入框) */
 input, 
 textarea {
     -webkit-user-select: text;
@@ -22,7 +22,7 @@ textarea {
     user-select: text;
 }
 
-/* 自定义光标样式，提示内容受保护 */
+/* 自定义光标样式,提示内容受保护 */
 .protected-content {
     cursor: default;
 } 
