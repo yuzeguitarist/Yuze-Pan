@@ -1,0 +1,1125 @@
+:root {
+    --primary-color: #121212;
+    --secondary-color: #fff;
+    --accent-color: #e5d5c0;
+    --nav-height: 60px;
+    --player-height: 60px;
+    --transition-speed: 0.3s;
+    --font-main: "Cormorant Garamond", serif, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-main);
+    background: var(--primary-color);
+    color: var(--secondary-color);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    padding-bottom: calc(var(--nav-height) + var(--player-height) + 2rem);
+    transition: opacity 0.3s ease;
+}
+
+/* 优化的动画关键帧 */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { 
+        transform: translate3d(0, 20px, 0);
+        opacity: 0; 
+    }
+    to { 
+        transform: translate3d(0, 0, 0);
+        opacity: 1; 
+    }
+}
+
+/* === 首页英雄区域 === */
+.hero-section {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: 0;
+    background-color: transparent;
+    margin-bottom: 0;
+}
+
+.hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
+
+/* === 简历部分 === */
+.profile-section {
+    padding: 8rem 0;
+    background: var(--primary-color);
+    position: relative;
+    margin-top: 0;
+    min-height: 300px;
+}
+
+.profile-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.profile-name {
+    font-size: 3.5rem;
+    font-weight: 300;
+    margin-bottom: 3rem;
+    letter-spacing: 2px;
+}
+
+.profile-items {
+    margin-bottom: 4rem;
+    width: 100%;
+    min-height: 200px;
+}
+
+/* 简历项优化 - 默认隐藏,通过JS控制显示 */
+.profile-item {
+    margin-bottom: 1.5rem;
+    font-size: 1.25rem;
+    line-height: 1.7;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    /* 确保没有任何动画效果 */
+    transform: none !important;
+    opacity: 1 !important;
+    transition: none !important;
+    animation: none !important;
+}
+
+.profile-divider {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 500px;
+    margin: 3rem auto;
+    height: 20px;
+}
+
+.profile-divider::before,
+.profile-divider::after {
+    content: '';
+    height: 1px;
+    background: linear-gradient(
+        to var(--direction, right),
+        rgba(255, 255, 255, 0.6) 0%,
+        rgba(255, 255, 255, 0.2) 80%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    flex-grow: 1;
+    max-width: 220px;
+}
+
+.profile-divider::before {
+    --direction: right;
+}
+
+.profile-divider::after {
+    --direction: left;
+}
+
+.profile-divider span {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.6);
+    margin: 0 15px;
+}
+
+/* 移除动画相关类 */
+.profile-item.animated {
+    /* 清除所有动画效果 */
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+}
+
+/* === 社交图标 === */
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 6rem;
+    margin: 1rem 0 2rem;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.8s ease 0.4s forwards, slideUp 0.8s ease 0.4s forwards;
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    transition: transform var(--transition-speed) ease;
+}
+
+.social-link:hover {
+    transform: scale(1.1);
+}
+
+.social-link svg {
+    width: 28px;
+    height: 28px;
+    color: var(--secondary-color);
+    fill: currentColor;
+}
+
+.social-link:hover svg {
+    color: var(--accent-color);
+}
+
+/* === 导航栏 === */
+.nav-bar {
+    position: fixed;
+    bottom: var(--player-height);
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 3rem;
+    background-color: rgba(0, 0, 0, 0.95);
+    z-index: 100;
+    height: 60px;
+    transition: transform 0.3s ease, height 0.3s ease, bottom 0.3s ease;
+}
+
+.nav-logo {
+    font-size: 2rem;
+    font-weight: 300;
+    letter-spacing: 1px;
+    transition: opacity var(--transition-speed) ease;
+    white-space: nowrap;
+}
+
+.nav-logo:hover {
+    opacity: 0.8;
+}
+
+.nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+}
+
+/* 恢复导航项基本样式 */
+.nav-item {
+    color: var(--secondary-color);
+    text-decoration: none;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    transition: color var(--transition-speed) ease;
+    position: relative;
+    padding: 0.5rem 0;
+}
+
+.nav-item:hover {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.nav-item::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 1px;
+    bottom: 0;
+    left: 50%;
+    background: var(--secondary-color);
+    transition: all var(--transition-speed) ease;
+    transform: translateX(-50%);
+}
+
+.nav-item:hover::after,
+.nav-item.active::after {
+    width: 100%;
+}
+
+/* === 播放器栏 === */
+.player-bar {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: var(--player-height);
+    background: rgb(20, 20, 20); /* 修改为不透明的灰色,保持相同的色调 */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 3rem;
+    z-index: 1000;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    transition: transform 0.4s ease, bottom 0.4s ease, opacity 0.4s ease;
+}
+
+.player-controls {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    z-index: 1001;
+}
+
+.player-btn {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+    opacity: 0.85;
+    padding: 0;
+    margin: 0 8px;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.player-btn:hover, .player-btn:active {
+    opacity: 1;
+}
+
+.player-btn::after {
+    content: none;
+}
+
+.player-btn:hover::after {
+    background: none;
+    box-shadow: none;
+    animation: none;
+}
+
+.play-btn {
+    background-image: url('https://img.icons8.com/ios-filled/50/ffffff/play.png');
+    width: 28px;
+    height: 28px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.play-btn.playing {
+    background-image: url('https://img.icons8.com/ios-filled/50/ffffff/pause.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* 使用图片替代Unicode字符 */
+.prev-btn {
+    background-image: url('https://img.icons8.com/ios-filled/50/ffffff/rewind.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 24px;
+    height: 24px;
+}
+
+.next-btn {
+    background-image: url('https://img.icons8.com/ios-filled/50/ffffff/fast-forward.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 24px;
+    height: 24px;
+}
+
+/* 移除之前的伪元素样式 */
+.prev-btn::before, 
+.next-btn::before, 
+.play-btn::before, 
+.play-btn.playing::before {
+    content: none;
+}
+
+.player-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+    gap: 0.3rem;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+    color: white;
+}
+
+.track-name {
+    font-style: italic;
+    opacity: 0.9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 300px;
+}
+
+.track-time {
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+/* === 联系页面 === */
+.contact-section {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.contact-container {
+    max-width: 600px;
+    padding: 0 2rem;
+    animation: slideUp 0.8s ease;
+}
+
+.contact-title {
+    font-size: 3.5rem;
+    font-weight: 300;
+    margin-bottom: 2rem;
+    letter-spacing: 2px;
+}
+
+.contact-text {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+}
+
+.contact-email {
+    margin-top: 3rem;
+}
+
+.contact-email a {
+    color: var(--secondary-color);
+    font-size: 1.8rem;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 0.2rem;
+    transition: all var(--transition-speed) ease;
+}
+
+.contact-email a:hover {
+    border-bottom-color: var(--secondary-color);
+}
+
+/* === 视频页面 === */
+.video-section {
+    min-height: 100vh;
+    padding: 8rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary-color); /* 使用变量保持一致性 */
+}
+
+.video-container {
+    max-width: 900px;
+    width: 100%;
+    padding: 0 2rem;
+    text-align: center;
+    animation: fadeIn 0.8s ease;
+}
+
+.video-title {
+    font-size: 3.5rem;
+    font-weight: 300;
+    margin-bottom: 1.5rem;
+    letter-spacing: 2px;
+}
+
+.video-description {
+    font-size: 1.5rem;
+    margin-bottom: 4rem;
+    opacity: 0.9;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.video-wrapper {
+    width: 100%;
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+    height: 0;
+    overflow: hidden;
+    border-radius: 4px;
+    background-color: var(--primary-color); /* 与背景一致 */
+    margin: 0 auto;
+    /* 优化阴影效果，减少与背景的视觉差异 */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.3s ease;
+}
+
+/* YouTube API会自动创建的iframe样式 */
+.video-wrapper iframe,
+#youtube-player iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+    border: none;
+}
+
+/* YouTube播放器优化 */
+.video-wrapper iframe {
+    width: 100%;
+    height: 100%;
+    transition: opacity 0.3s ease;
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+    .profile-name {
+        font-size: 3rem;
+    }
+    
+    .contact-title, .video-title {
+        font-size: 3rem;
+    }
+    
+    .hero-image {
+        object-position: center 48%;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-bar {
+        height: 50px;
+        padding: 0 1.5rem;
+    }
+    
+    .nav-menu {
+        gap: 2rem;
+    }
+    
+    .profile-container, .video-container, .contact-container {
+        padding: 0 1.5rem;
+    }
+    
+    .profile-name {
+        font-size: 2.7rem;
+        margin-bottom: 2rem;
+    }
+    
+    .profile-item {
+        font-size: 1.15rem;
+    }
+    
+    .social-link {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .social-link svg {
+        width: 26px;
+        height: 26px;
+    }
+    
+    .contact-title, .video-title {
+        font-size: 2.7rem;
+    }
+    
+    .contact-text, .video-description {
+        font-size: 1.3rem;
+    }
+    
+    .contact-email a {
+        font-size: 1.5rem;
+    }
+    
+    .hero-section {
+        height: 82vh;
+    }
+    
+    .hero-image {
+        object-position: center 48%;
+    }
+    
+    .social-links {
+        gap: 5rem;
+    }
+    
+    .profile-divider {
+        max-width: 400px;
+        margin: 2.5rem auto;
+    }
+    
+    .profile-divider::before,
+    .profile-divider::after {
+        max-width: 170px;
+    }
+    
+    .profile-divider span {
+        margin: 0 12px;
+    }
+    
+    .player-btn {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .play-btn {
+        width: 32px;
+        height: 32px;
+    }
+    
+    /* 导航Logo样式 */
+    .nav-logo {
+        font-size: 1.6rem;
+        letter-spacing: 1px;
+        white-space: nowrap;
+        margin-bottom: 0.5rem;
+        text-align: center;
+    }
+    
+    .video-container {
+        padding: 0 1.5rem;
+    }
+    
+    .video-title {
+        font-size: 2.8rem;
+        margin-bottom: 1rem;
+    }
+    
+    .video-description {
+        margin-bottom: 2.5rem;
+        font-size: 1.3rem;
+    }
+    
+    .video-wrapper {
+        margin-bottom: 2rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    body.video-page .nav-bar,
+    body:not(.video-page) .nav-bar {
+        height: 50px;
+        padding: 0 1rem;
+    }
+    
+    .nav-logo {
+        font-size: 1.8rem;
+        letter-spacing: 0.8px;
+        margin-bottom: 15px;
+        text-align: center;
+        width: 100%;
+    }
+    
+    .nav-menu {
+        width: 100%; 
+        justify-content: space-around;
+        display: flex;
+        gap: 0;
+    }
+
+    .nav-item {
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+        text-align: center;
+        padding: 0 5px;
+    }
+    
+    .social-links {
+        gap: 3rem;
+    }
+}
+
+/* 恢复其他部分删除的样式 */
+@media (max-width: 480px) {
+    .profile-name {
+        font-size: 2.3rem;
+    }
+    
+    .profile-item {
+        font-size: 1.1rem;
+    }
+    
+    .social-links {
+        gap: 3.5rem;
+    }
+    
+    .social-link {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .social-link svg {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .contact-title, .video-title {
+        font-size: 2.3rem;
+    }
+    
+    .contact-text, .video-description {
+        font-size: 1.1rem;
+    }
+    
+    .contact-email a {
+        font-size: 1.3rem;
+    }
+    
+    .hero-section {
+        height: 70vh;
+    }
+    
+    .hero-image {
+        object-position: center 42%;
+    }
+    
+    .profile-divider {
+        max-width: 280px;
+        margin: 2rem auto;
+    }
+    
+    .profile-divider::before,
+    .profile-divider::after {
+        max-width: 120px;
+    }
+    
+    .profile-divider span {
+        margin: 0 10px;
+    }
+    
+    .player-btn {
+        width: 22px;
+        height: 22px;
+        margin: 0 6px;
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+        opacity: 0.95;
+    }
+    
+    .player-info {
+        font-size: 0.85rem;
+    }
+    
+    /* 修复底部区域的整体显示 */
+    .player-bar, .nav-bar {
+        width: 100%;
+        left: 0;
+        right: 0;
+    }
+    
+    .play-btn, .play-btn.playing {
+        width: 25px;
+        height: 25px;
+        margin: 0 8px;
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+        transform: none;
+        border-radius: 0;
+    }
+    
+    /* 确保所有按钮在移动设备上显示正确 */
+    .player-btn, .prev-btn, .next-btn, .play-btn, .play-btn.playing {
+        background-size: contain !important;
+        background-position: center !important;
+        background-repeat: no-repeat !important;
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    /* 调整控制区域间距 */
+    .player-controls {
+        gap: 0.8rem;
+    }
+
+    .video-wrapper {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* 减小阴影 */
+    }
+    
+    .video-section {
+        padding: 6rem 0;
+    }
+    
+    .video-title {
+        font-size: 2.3rem;
+    }
+    
+    .video-description {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .loading-spinner {
+        width: 36px;
+        height: 36px;
+        border-width: 3px;
+    }
+}
+
+/* 横屏模式下所有页面都使用单行布局 */
+@media screen and (max-height: 480px) and (orientation: landscape) {
+    .nav-bar,
+    body.video-page .nav-bar {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        height: auto;
+        min-height: 50px;
+        padding: 5px 1rem;
+    }
+    
+    .nav-logo {
+        margin-bottom: 0;
+        font-size: 1.4rem;
+    }
+    
+    :root {
+        --nav-height: 50px;
+    }
+}
+
+/* 移动设备触摸反馈 */
+.touch-active {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    transform: scale(0.95) !important;
+}
+
+/* 确保滚动平滑 */
+html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* 移动设备按钮专用样式 */
+.mobile-btn {
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* 在iOS设备上的特殊修复 */
+@supports (-webkit-touch-callout: none) {
+    .player-btn {
+        background: none;
+    }
+    
+    .play-btn {
+        background: none;
+    }
+}
+
+/* 空格键按下的视觉反馈 */
+.key-pressed {
+    animation: key-pulse 0.2s ease-in-out;
+}
+
+@keyframes key-pulse {
+    0% { transform: scale(1); opacity: 0.9; }
+    50% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.9; }
+}
+
+/* 特殊页面样式(视频页面) */
+body.video-page .player-bar {
+    transform: translateY(100%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+body.video-page .nav-bar {
+    bottom: 0;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s ease;
+}
+
+/* 页面过渡通用动画 */
+.page-transition {
+    animation: fadeTransition 0.5s ease;
+}
+
+@keyframes fadeTransition {
+    0% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+/* 添加导航活动项高亮样式 */
+.nav-item.active {
+    opacity: 1;
+    font-weight: 500;
+}
+
+/* 导航项激活状态增强 */
+.nav-item.active::after {
+    width: 100%;
+    opacity: 1;
+}
+
+/* 导航栏在视频页面的优化样式 */
+body.video-page .nav-bar {
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 完善页面过渡动画 */
+.nav-bar, .player-bar {
+    will-change: transform, opacity, bottom;
+    transition: transform 0.4s ease, bottom 0.4s ease, opacity 0.4s ease;
+}
+
+/* 页面反向过渡动画 */
+@keyframes slideUpTransition {
+    0% { 
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    100% { 
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes navBarRise {
+    0% { bottom: 0; }
+    100% { bottom: var(--player-height); }
+}
+
+/* 反向动画类 */
+.reverse-transition .player-bar {
+    animation: slideUpTransition 0.4s ease forwards;
+}
+
+.reverse-transition .nav-bar {
+    animation: navBarRise 0.4s ease forwards;
+}
+
+/* 确保导航栏的过渡效果更加平滑 */
+body.video-page .nav-bar {
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s ease;
+}
+
+body.video-page .nav-bar {
+    bottom: 0;
+}
+
+/* 仅在小屏幕手机设备上应用视频页面的两行导航样式 */
+@media screen and (max-width: 480px) {
+    body.video-page .nav-bar {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: var(--nav-height);
+    }
+}
+
+/* 视频页面导航栏调整 */
+body.video-page .nav-bar {
+    bottom: 0;
+}
+
+/* 针对768px以下设备优化导航样式 */
+@media screen and (max-width: 768px) {
+    .nav-bar {
+        padding: 0 1.5rem;
+    }
+    
+    .nav-menu {
+        gap: 2rem;
+    }
+}
+
+/* 在小屏幕手机设备上,所有页面(包括视频页面)都使用两行布局 */
+@media screen and (max-width: 480px) {
+    body.video-page .nav-bar,
+    .nav-bar {
+        flex-direction: column; /* 改为纵向两行 */
+        justify-content: center; /* 整体居中 */
+        align-items: center; /* 水平居中 */
+        height: var(--nav-height);
+    }
+    
+    .nav-logo {
+        margin-bottom: 0.7rem; /* 添加下边距 */
+        text-align: center;
+    }
+    
+    .nav-menu {
+        width: 100%;
+        justify-content: center; /* 导航菜单居中 */
+    }
+}
+
+/* 视频页面导航栏统一样式 */
+body.video-page .nav-bar {
+    bottom: 0; /* 仅调整位置,保持在屏幕底部 */
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s ease;
+}
+
+/* 针对768px以下设备优化导航间距 */
+@media screen and (max-width: 768px) {
+    .nav-bar {
+        padding: 0 1.5rem;
+    }
+    
+    .nav-menu {
+        gap: 2rem;
+    }
+}
+
+/* === Gallery页面标题部分 === */
+.gallery-header-section {
+    padding: 4rem 0 2rem;
+    background: var(--primary-color);
+    position: relative;
+    margin-top: 0;
+}
+
+.gallery-header-section .gallery-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    animation: fadeIn 1s ease;
+}
+
+.gallery-header-section .gallery-title {
+    font-size: 3.5rem;
+    font-weight: 300;
+    margin-bottom: 2rem;
+    letter-spacing: 3px;
+    color: var(--secondary-color);
+}
+
+/* 移动设备导航栏样式覆盖 - 确保导航栏两行显示 */
+@media screen and (max-width: 480px) {
+    /* 重设根变量适应两行导航 */
+    :root {
+        --nav-height: 110px; /* 增加导航栏高度以适应两行 */
+    }
+    
+    /* 调整底部内边距 */
+    body {
+        padding-bottom: calc(var(--nav-height) + var(--player-height) + 20px);
+    }
+
+    /* 所有页面的导航栏样式 */
+    .nav-bar {
+        flex-direction: column !important; /* 强制使用列布局 */
+        justify-content: center !important;
+        align-items: center !important;
+        padding: 12px 1rem !important; /* 增加内边距 */
+        height: var(--nav-height) !important;
+    }
+    
+    /* 导航logo样式 */
+    .nav-logo {
+        font-size: 1.8rem;
+        letter-spacing: 0.8px;
+        margin-bottom: 15px; /* 增加与菜单的间距 */
+        text-align: center;
+        width: 100%;
+    }
+    
+    /* 导航菜单样式 */
+    .nav-menu {
+        width: 100%; 
+        display: flex !important;
+        justify-content: space-around !important; /* 平均分布 */
+        gap: 0 !important; /* 移除间隙 */
+    }
+    
+    /* 导航项样式 */
+    .nav-item {
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+        text-align: center;
+        padding: 0 5px; /* 防止文字过长换行 */
+    }
+    
+    /* 视频页面特殊处理 */
+    body.video-page .nav-bar {
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+        height: var(--nav-height) !important;
+        padding: 12px 1rem !important;
+    }
+    
+    /* 播放器栏样式 */
+    .player-bar {
+        width: 100%;
+        left: 0;
+        right: 0;
+        padding: 0 1rem;
+    }
+}
+
+/* YouTube视频加载动画 */
+.video-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #121212;
+    z-index: 10;
+}
+
+.loading-spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-left-color: #fff;
+    border-radius: 50%;
+    animation: spinner 1s linear infinite;
+}
+
+@keyframes spinner {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* 确保YouTube播放器的容器充满整个区域 */
+#youtube-player {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+} 

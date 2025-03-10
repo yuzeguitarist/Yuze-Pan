@@ -1,0 +1,28 @@
+/* 防止文本选择和复制的CSS */
+body {
+    /* 禁用文本选择 */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    
+    /* 禁用拖动 */
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+}
+
+/* 保持某些元素可选中（如输入框） */
+input, 
+textarea {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+/* 自定义光标样式，提示内容受保护 */
+.protected-content {
+    cursor: default;
+} 
