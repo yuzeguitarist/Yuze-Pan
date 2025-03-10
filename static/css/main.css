@@ -562,66 +562,36 @@ body {
 }
 
 @media (max-width: 480px) {
+    .nav-bar, .player-bar {
+        padding: 0 1rem;
+    }
+    
     .nav-bar {
         flex-direction: column;
-        padding: 0.5rem 1rem;
+        padding: 0.8rem 1rem;
         height: auto;
     }
     
     .nav-logo {
-        width: 100%;
-        text-align: center;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.7rem;
+        font-size: 1.8rem;
     }
     
     .nav-menu {
         width: 100%;
-        overflow-x: auto;
-        white-space: nowrap;
-        scrollbar-width: none; /* Firefox */
-        -ms-overflow-style: none; /* IE and Edge */
-        padding-bottom: 0.5rem;
-        justify-content: flex-start;
-        position: relative;
+        justify-content: space-between;
     }
     
-    .nav-menu::-webkit-scrollbar {
-        display: none; /* Chrome, Safari, Opera */
+    /* 手机端隐藏PROFILE按钮 */
+    .nav-menu a[href*="profile"] {
+        display: none;
     }
     
-    .nav-item {
-        display: inline-block;
-        padding: 0.5rem 1rem;
-    }
-    
-    /* 滑动提示样式 */
-    .nav-menu::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        height: 100%;
-        width: 20px;
-        background: linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,0.8));
-        pointer-events: none;
-        opacity: 0.6;
-    }
-    
-    .nav-menu::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 100%;
-        width: 20px;
-        background: linear-gradient(to left, rgba(0,0,0,0), rgba(0,0,0,0.8));
-        pointer-events: none;
-        opacity: 0.6;
-    }
-    
-    /* 添加拖动时的光标样式 */
-    .nav-menu.grabbing {
-        cursor: grabbing;
+    /* 重新排布剩余的四个导航项,使其均匀分布 */
+    .nav-menu a.nav-item {
+        margin: 0;
+        padding: 0.3rem 0;
+        font-size: 0.9rem;
     }
     
     .profile-name {
@@ -856,12 +826,20 @@ body {
     
     .nav-menu {
         width: 100%; 
-        gap: 1.2rem; /* 减小间距 */
+        gap: 0; /* 移除间距,使用justify-content来分布 */
+        justify-content: space-between; /* 均匀分布四个导航项 */
+    }
+    
+    /* 隐藏PROFILE按钮 */
+    .nav-menu a[href*="profile"] {
+        display: none;
     }
     
     .nav-item {
         font-size: 0.85rem;
         letter-spacing: 1px;
+        padding: 0;
+        margin: 0;
     }
     
     /* 恢复播放器样式 */
