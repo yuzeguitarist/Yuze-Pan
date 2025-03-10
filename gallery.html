@@ -2,16 +2,257 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gallery - Yuze Pan | 古典吉他演奏家</title>
     <link href="static/css/main.css" rel="stylesheet">
     <link href="static/css/protection.css" rel="stylesheet">
-    <link href="static/css/parallax.css" rel="stylesheet">
-    <link href="static/css/gallery.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="icon" href="static/images/favicon.ico" type="image/x-icon">
+    <style>
+        /* 画廊特定样式 */
+        .gallery-section {
+            padding: 2rem 0 4rem;
+            background: var(--primary-color);
+            position: relative;
+        }
+        
+        .gallery-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            animation: fadeIn 1s ease;
+        }
+        
+        .gallery-title {
+            text-align: center;
+            font-size: 3.5rem;
+            font-weight: 300;
+            margin-bottom: 3rem;
+            letter-spacing: 2px;
+        }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 4px;
+            aspect-ratio: 324.34/250; /* 横向长方形比例 */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            height: 250px;
+        }
+        
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            transition: transform 0.5s ease, opacity 0.3s ease;
+            opacity: 0;
+        }
+        
+        .gallery-item.loaded img {
+            opacity: 1;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+        
+        .gallery-item-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem 1.5rem 1rem;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0) 100%);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            transform: translateY(20px);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+        
+        .gallery-item:hover .gallery-item-overlay {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .gallery-item-title {
+            font-size: 1.1rem;
+            margin-bottom: 0.3rem;
+            line-height: 1.4;
+        }
+
+        .gallery-item-description {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .gallery-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 2rem;
+        }
+        
+        .gallery-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .modal-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 80%;
+        }
+        
+        .modal-content img {
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+        
+        .modal-caption {
+            position: absolute;
+            bottom: -40px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            padding: 10px;
+            font-size: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .modal-description {
+            position: absolute;
+            bottom: -70px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            padding: 5px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-close:before, .modal-close:after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            background: var(--secondary-color);
+        }
+        
+        .modal-close:before {
+            transform: rotate(45deg);
+        }
+        
+        .modal-close:after {
+            transform: rotate(-45deg);
+        }
+        
+        .gallery-item.loading:before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 30px;
+            height: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--secondary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            transform: translate(-50%, -50%);
+        }
+        
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 900px) {
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .gallery-title {
+                font-size: 2.5rem;
+                margin-bottom: 2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .gallery-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .gallery-container {
+                padding: 0 1rem;
+            }
+            
+            .gallery-item-title {
+                font-size: 1rem;
+            }
+            
+            .gallery-title {
+                font-size: 2rem;
+            }
+        }
+        
+        /* 英雄区域样式 */
+        .hero-section {
+            height: 90vh; /* 调整为与首页相同的高度,确保图片完整显示 */
+        }
+        
+        /* 播放器栏样式覆盖 */
+        .player-bar {
+            background: #121212 !important; /* 不透明的灰色背景 */
+            backdrop-filter: none !important; /* 移除模糊效果 */
+            -webkit-backdrop-filter: none !important; /* 移除模糊效果 (Safari) */
+        }
+    </style>
 </head>
 <body class="page-transition">
     <!-- 英雄区域 -->
@@ -19,33 +260,27 @@
         <img src="static/images/Home.jpg" alt="Yuze Pan - Classical Guitarist" class="hero-image">
     </section>
     
-    <!-- 标题部分 -->
-    <section id="title" class="gallery-header-section">
+    <!-- 画廊部分 -->
+    <section class="gallery-section">
         <div class="gallery-container">
             <h1 class="gallery-title">画廊</h1>
-        </div>
-    </section>
-    
-    <!-- 图片库部分 -->
-    <section id="gallery" class="gallery-section">
-        <!-- 为保证三列布局,添加辅助容器 -->
-        <div class="gallery-container">
-            <!-- JavaScript将动态填充此容器,以下是结构示例 -->
-            <!-- 
-            <div class="gallery-category" data-category="competition">
-                <div class="gallery-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; width: 100%;">
-                    <div class="gallery-item" style="height: 250px; width: 100%;">
-                        <img src="..." alt="...">
-                        <div class="gallery-item-caption">
-                            <h3 class="gallery-item-title">标题</h3>
-                            <p class="gallery-item-description">描述</p>
-                        </div>
-                    </div>
-                    <!-- 重复两次以形成三列 -->
-                </div>
+            
+            <!-- 图片网格 -->
+            <div class="gallery-grid" id="gallery-grid">
+                <!-- 图片将通过JavaScript动态生成 -->
             </div>
         </div>
     </section>
+    
+    <!-- 画廊模态框 -->
+    <div class="gallery-modal">
+        <div class="modal-content">
+            <img src="" alt="">
+            <div class="modal-caption"></div>
+            <div class="modal-description"></div>
+            <button class="modal-close" aria-label="关闭"></button>
+        </div>
+    </div>
     
     <!-- 导航栏 -->
     <div class="nav-bar">
@@ -75,41 +310,170 @@
     <!-- 脚本 -->
     <script src="static/js/player.js"></script>
     <script src="static/js/protection.js"></script>
-    <script src="static/js/gallery.js"></script>
     <script>
-        // 平滑滚动
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth'
+        document.addEventListener('DOMContentLoaded', function() {
+            // 所有图片数据
+            const galleryImages = [
+                {
+                    id: 1,
+                    src: 'static/images/gallery/Segovia International Guitar Competition Monheim,Germany.jpg',
+                    title: '德国Segovia国际吉他比赛',
+                    description: '与郦嘉炯老师的获奖合影'
+                },
+                {
+                    id: 2,
+                    src: 'static/images/gallery/Segovia International Guitar Competition Winners\' Concert.jpg',
+                    title: 'Segovia国际吉他比赛获奖者音乐会',
+                    description: '比赛后的获奖者音乐会演出'
+                },
+                {
+                    id: 3,
+                    src: 'static/images/gallery/Photos of the "Juan Crisostomo de Arriaga" International Guitar Competition in Spain.jpg',
+                    title: '西班牙"Juan Crisostomo de Arriaga"国际吉他比赛',
+                    description: '西班牙比赛获奖合影'
+                },
+                {
+                    id: 4,
+                    src: 'static/images/gallery/Concert at Hangzhou.jpg',
+                    title: '杭州音乐会',
+                    description: '在杭州举办的古典吉他音乐会'
+                },
+                {
+                    id: 5,
+                    src: 'static/images/gallery/Hua Bin Opera House Future Stars Performance Photo.jpg',
+                    title: '华彬歌剧院未来之星演出',
+                    description: '在北京华彬歌剧院未来之星系列音乐会上的演出'
+                },
+                {
+                    id: 6,
+                    src: 'static/images/gallery/Hua Bin Opera House Future Stars Performance Group Photo.jpg',
+                    title: '华彬歌剧院未来之星合影',
+                    description: '未来之星系列音乐会后的合影'
+                },
+                {
+                    id: 7,
+                    src: 'static/images/gallery/judicael_perroy_masterclass_changsha_hunan_china.jpg',
+                    title: 'Judicael Perroy大师课',
+                    description: '在湖南长沙参加国际知名吉他演奏家Judicael Perroy的大师课'
+                },
+                {
+                    id: 8,
+                    src: 'static/images/gallery/photo_with_professor_judicael_perroy_changsha_hunan_china.jpg',
+                    title: '与Judicael Perroy教授合影',
+                    description: '在湖南长沙与国际著名吉他大师Judicael Perroy的合影'
+                },
+                {
+                    id: 9,
+                    src: 'static/images/gallery/Masterclass by Professor Lorenzo Micheli, Central Conservatory of Music Middle School, Beijing.jpg',
+                    title: 'Lorenzo Micheli教授大师班',
+                    description: '在中央音乐学院附中接受Lorenzo Micheli教授的指导'
+                }
+            ];
+            
+            // 获取DOM元素
+            const galleryGrid = document.getElementById('gallery-grid');
+            const galleryModal = document.querySelector('.gallery-modal');
+            const modalImage = galleryModal.querySelector('img');
+            const modalCaption = galleryModal.querySelector('.modal-caption');
+            const modalDescription = galleryModal.querySelector('.modal-description');
+            const modalClose = galleryModal.querySelector('.modal-close');
+            
+            // 渲染所有图片
+            function renderGallery() {
+                // 添加所有图片
+                galleryImages.forEach(image => {
+                    // 创建图片项
+                    const galleryItem = document.createElement('div');
+                    galleryItem.className = 'gallery-item loading';
+                    galleryItem.dataset.id = image.id;
+                    
+                    // 创建图片元素
+                    const img = document.createElement('img');
+                    img.src = image.src;
+                    img.alt = image.title;
+                    img.loading = 'lazy';
+                    
+                    // 图片加载处理
+                    img.onload = function() {
+                        galleryItem.classList.remove('loading');
+                        galleryItem.classList.add('loaded');
+                    };
+                    
+                    img.onerror = function() {
+                        galleryItem.classList.remove('loading');
+                        galleryItem.innerHTML = '<p style="padding: 2rem; text-align: center;">图片加载失败</p>';
+                    };
+                    
+                    // 创建悬停显示的叠加层
+                    const overlay = document.createElement('div');
+                    overlay.className = 'gallery-item-overlay';
+                    
+                    // 标题
+                    const title = document.createElement('h3');
+                    title.className = 'gallery-item-title';
+                    title.textContent = image.title;
+                    
+                    // 描述(如果有)
+                    if (image.description) {
+                        const description = document.createElement('p');
+                        description.className = 'gallery-item-description';
+                        description.textContent = image.description;
+                        overlay.appendChild(title);
+                        overlay.appendChild(description);
+                    } else {
+                        overlay.appendChild(title);
+                    }
+                    
+                    // 组装项目
+                    galleryItem.appendChild(img);
+                    galleryItem.appendChild(overlay);
+                    galleryGrid.appendChild(galleryItem);
+                    
+                    // 添加点击事件,打开模态框
+                    galleryItem.addEventListener('click', function() {
+                        openModal(image.src, image.title, image.description);
                     });
-                }
-            });
-        });
-        
-        // 激活当前导航项
-        const navItems = document.querySelectorAll('.nav-item');
-        window.addEventListener('scroll', () => {
-            let current = '';
-            const sections = document.querySelectorAll('section');
+                });
+            }
             
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                const sectionHeight = section.clientHeight;
-                if (pageYOffset >= (sectionTop - sectionHeight / 3)) {
-                    current = section.getAttribute('id');
+            // 打开模态框
+            function openModal(src, title, description = '') {
+                modalImage.src = src;
+                modalCaption.textContent = title;
+                modalDescription.textContent = description;
+                galleryModal.classList.add('active');
+                
+                // 禁止滚动
+                document.body.style.overflow = 'hidden';
+            }
+            
+            // 关闭模态框
+            function closeModal() {
+                galleryModal.classList.remove('active');
+                
+                // 恢复滚动
+                document.body.style.overflow = '';
+            }
+            
+            // 点击关闭按钮
+            modalClose.addEventListener('click', closeModal);
+            
+            // 点击模态框背景也关闭
+            galleryModal.addEventListener('click', function(e) {
+                if (e.target === galleryModal) {
+                    closeModal();
                 }
             });
             
-            navItems.forEach(item => {
-                item.classList.remove('active');
-                if (item.getAttribute('href').includes(current)) {
-                    item.classList.add('active');
+            // ESC键关闭模态框
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && galleryModal.classList.contains('active')) {
+                    closeModal();
                 }
             });
+            
+            // 初始加载所有图片
+            renderGallery();
         });
     </script>
 </body>
