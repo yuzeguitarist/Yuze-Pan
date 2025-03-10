@@ -562,34 +562,66 @@ body {
 }
 
 @media (max-width: 480px) {
-    .nav-bar, .player-bar {
-        padding: 0 1rem;
-    }
-    
     .nav-bar {
-        flex-direction: column; /* 改为纵向两行 */
-        justify-content: center; /* 整体居中 */
-        align-items: center; /* 水平居中 */
-        padding: 0 1rem;
-        height: var(--nav-height);
+        flex-direction: column;
+        padding: 0.5rem 1rem;
+        height: auto;
     }
     
     .nav-logo {
-        font-size: 1.5rem;
-        letter-spacing: 0.5px;
-        margin-bottom: 0.7rem; /* 添加下边距 */
+        width: 100%;
         text-align: center;
+        margin-bottom: 0.5rem;
     }
     
     .nav-menu {
         width: 100%;
-        justify-content: center; /* 导航菜单居中 */
-        gap: 1.2rem; /* 减小间距 */
+        overflow-x: auto;
+        white-space: nowrap;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE and Edge */
+        padding-bottom: 0.5rem;
+        justify-content: flex-start;
+        position: relative;
+    }
+    
+    .nav-menu::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera */
     }
     
     .nav-item {
-        font-size: 0.85rem;
-        letter-spacing: 1px;
+        display: inline-block;
+        padding: 0.5rem 1rem;
+    }
+    
+    /* 滑动提示样式 */
+    .nav-menu::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 100%;
+        width: 20px;
+        background: linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,0.8));
+        pointer-events: none;
+        opacity: 0.6;
+    }
+    
+    .nav-menu::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 20px;
+        background: linear-gradient(to left, rgba(0,0,0,0), rgba(0,0,0,0.8));
+        pointer-events: none;
+        opacity: 0.6;
+    }
+    
+    /* 添加拖动时的光标样式 */
+    .nav-menu.grabbing {
+        cursor: grabbing;
     }
     
     .profile-name {
