@@ -45,8 +45,11 @@
             aspect-ratio: 324.34/250; /* 横向长方形比例 */
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             background: rgba(0, 0, 0, 0.2);
-            cursor: pointer;
             height: 250px;
+            user-select: none; /* 防止选择 */
+            -webkit-user-select: none;
+            -webkit-touch-callout: none; /* 防止iOS设备上的长按菜单 */
+            -webkit-user-drag: none; /* 防止拖拽 */
         }
         
         .gallery-item:hover {
@@ -61,6 +64,11 @@
             object-position: center;
             transition: transform 0.5s ease, opacity 0.3s ease;
             opacity: 0;
+            pointer-events: none; /* 防止直接与图片交互 */
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-user-drag: none;
         }
         
         .gallery-item.loaded img {
@@ -69,6 +77,18 @@
 
         .gallery-item:hover img {
             transform: scale(1.05);
+        }
+        
+        /* 图片保护层 */
+        .gallery-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+            pointer-events: auto; /* 确保点击事件仍然有效 */
         }
         
         .gallery-item-overlay {
@@ -84,6 +104,7 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
+            z-index: 2; /* 确保在保护层之上 */
         }
         
         .gallery-item:hover .gallery-item-overlay {
@@ -100,93 +121,6 @@
         .gallery-item-description {
             font-size: 0.9rem;
             opacity: 0.8;
-        }
-        
-        .gallery-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-            padding: 2rem;
-        }
-        
-        .gallery-modal.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        
-        .modal-content {
-            position: relative;
-            max-width: 90%;
-            max-height: 80%;
-        }
-        
-        .modal-content img {
-            max-width: 100%;
-            max-height: 80vh;
-            object-fit: contain;
-            border-radius: 4px;
-        }
-        
-        .modal-caption {
-            position: absolute;
-            bottom: -40px;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            padding: 10px;
-            font-size: 1rem;
-            color: var(--secondary-color);
-        }
-
-        .modal-description {
-            position: absolute;
-            bottom: -70px;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            padding: 5px;
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.7);
-        }
-        
-        .modal-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 30px;
-            height: 30px;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal-close:before, .modal-close:after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 1px;
-            background: var(--secondary-color);
-        }
-        
-        .modal-close:before {
-            transform: rotate(45deg);
-        }
-        
-        .modal-close:after {
-            transform: rotate(-45deg);
         }
         
         .gallery-item.loading:before {
@@ -263,7 +197,7 @@
     <!-- 画廊部分 -->
     <section class="gallery-section">
         <div class="gallery-container">
-            <h1 class="gallery-title">画廊</h1>
+            <h1 class="gallery-title">Gallery</h1>
             
             <!-- 图片网格 -->
             <div class="gallery-grid" id="gallery-grid">
@@ -271,16 +205,6 @@
             </div>
         </div>
     </section>
-    
-    <!-- 画廊模态框 -->
-    <div class="gallery-modal">
-        <div class="modal-content">
-            <img src="" alt="">
-            <div class="modal-caption"></div>
-            <div class="modal-description"></div>
-            <button class="modal-close" aria-label="关闭"></button>
-        </div>
-    </div>
     
     <!-- 导航栏 -->
     <div class="nav-bar">
@@ -317,66 +241,61 @@
                 {
                     id: 1,
                     src: 'static/images/gallery/Segovia International Guitar Competition Monheim,Germany.jpg',
-                    title: '德国Segovia国际吉他比赛',
-                    description: '与郦嘉炯老师的获奖合影'
+                    title: 'Segovia International Guitar Competition in Germany',
+                    description: 'Award ceremony with Professor Li Jiajiong'
                 },
                 {
                     id: 2,
                     src: 'static/images/gallery/Segovia International Guitar Competition Winners\' Concert.jpg',
-                    title: 'Segovia国际吉他比赛获奖者音乐会',
-                    description: '比赛后的获奖者音乐会演出'
+                    title: 'Segovia International Guitar Competition Winners\' Concert',
+                    description: 'Performance at the winners\' concert after the competition'
                 },
                 {
                     id: 3,
                     src: 'static/images/gallery/Photos of the "Juan Crisostomo de Arriaga" International Guitar Competition in Spain.jpg',
-                    title: '西班牙"Juan Crisostomo de Arriaga"国际吉他比赛',
-                    description: '西班牙比赛获奖合影'
+                    title: '"Juan Crisostomo de Arriaga" International Guitar Competition in Spain',
+                    description: 'Award ceremony at the Spanish competition'
                 },
                 {
                     id: 4,
                     src: 'static/images/gallery/Concert at Hangzhou.jpg',
-                    title: '杭州音乐会',
-                    description: '在杭州举办的古典吉他音乐会'
+                    title: 'Concert in Hangzhou',
+                    description: 'Classical guitar concert held in Hangzhou'
                 },
                 {
                     id: 5,
                     src: 'static/images/gallery/Hua Bin Opera House Future Stars Performance Photo.jpg',
-                    title: '华彬歌剧院未来之星演出',
-                    description: '在北京华彬歌剧院未来之星系列音乐会上的演出'
+                    title: 'Future Stars Performance at Hua Bin Opera House',
+                    description: 'Performance at the Future Stars concert series in Beijing Hua Bin Opera House'
                 },
                 {
                     id: 6,
                     src: 'static/images/gallery/Hua Bin Opera House Future Stars Performance Group Photo.jpg',
-                    title: '华彬歌剧院未来之星合影',
-                    description: '未来之星系列音乐会后的合影'
+                    title: 'Future Stars Group Photo at Hua Bin Opera House',
+                    description: 'Group photo after the Future Stars concert series'
                 },
                 {
                     id: 7,
                     src: 'static/images/gallery/judicael_perroy_masterclass_changsha_hunan_china.jpg',
-                    title: 'Judicael Perroy大师课',
-                    description: '在湖南长沙参加国际知名吉他演奏家Judicael Perroy的大师课'
+                    title: 'Masterclass with Judicael Perroy',
+                    description: 'Participating in internationally renowned guitarist Judicael Perroy\'s masterclass in Changsha, Hunan'
                 },
                 {
                     id: 8,
                     src: 'static/images/gallery/photo_with_professor_judicael_perroy_changsha_hunan_china.JPG',
-                    title: '与Judicael Perroy教授合影',
-                    description: '在湖南长沙与国际著名吉他大师Judicael Perroy的合影'
+                    title: 'With Professor Judicael Perroy',
+                    description: 'Photo with internationally renowned guitar master Judicael Perroy in Changsha, Hunan'
                 },
                 {
                     id: 9,
                     src: 'static/images/gallery/Masterclass by Professor Lorenzo Micheli, Central Conservatory of Music Middle School, Beijing.jpg',
-                    title: 'Lorenzo Micheli教授大师班',
-                    description: '在中央音乐学院附中接受Lorenzo Micheli教授的指导'
+                    title: 'Masterclass with Professor Lorenzo Micheli',
+                    description: 'Receiving guidance from Professor Lorenzo Micheli at the Middle School Affiliated to the Central Conservatory of Music'
                 }
             ];
             
             // 获取DOM元素
             const galleryGrid = document.getElementById('gallery-grid');
-            const galleryModal = document.querySelector('.gallery-modal');
-            const modalImage = galleryModal.querySelector('img');
-            const modalCaption = galleryModal.querySelector('.modal-caption');
-            const modalDescription = galleryModal.querySelector('.modal-description');
-            const modalClose = galleryModal.querySelector('.modal-close');
             
             // 渲染所有图片
             function renderGallery() {
@@ -392,6 +311,7 @@
                     img.src = image.src;
                     img.alt = image.title;
                     img.loading = 'lazy';
+                    img.draggable = false; // 防止拖拽
                     
                     // 图片加载处理
                     img.onload = function() {
@@ -401,7 +321,7 @@
                     
                     img.onerror = function() {
                         galleryItem.classList.remove('loading');
-                        galleryItem.innerHTML = '<p style="padding: 2rem; text-align: center;">图片加载失败</p>';
+                        galleryItem.innerHTML = '<p style="padding: 2rem; text-align: center;">Image failed to load</p>';
                     };
                     
                     // 创建悬停显示的叠加层
@@ -428,52 +348,51 @@
                     galleryItem.appendChild(img);
                     galleryItem.appendChild(overlay);
                     galleryGrid.appendChild(galleryItem);
-                    
-                    // 添加点击事件,打开模态框
-                    galleryItem.addEventListener('click', function() {
-                        openModal(image.src, image.title, image.description);
-                    });
                 });
             }
             
-            // 打开模态框
-            function openModal(src, title, description = '') {
-                modalImage.src = src;
-                modalCaption.textContent = title;
-                modalDescription.textContent = description;
-                galleryModal.classList.add('active');
-                
-                // 禁止滚动
-                document.body.style.overflow = 'hidden';
-            }
-            
-            // 关闭模态框
-            function closeModal() {
-                galleryModal.classList.remove('active');
-                
-                // 恢复滚动
-                document.body.style.overflow = '';
-            }
-            
-            // 点击关闭按钮
-            modalClose.addEventListener('click', closeModal);
-            
-            // 点击模态框背景也关闭
-            galleryModal.addEventListener('click', function(e) {
-                if (e.target === galleryModal) {
-                    closeModal();
-                }
-            });
-            
-            // ESC键关闭模态框
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && galleryModal.classList.contains('active')) {
-                    closeModal();
-                }
-            });
-            
             // 初始加载所有图片
             renderGallery();
+            
+            // 禁用右键菜单
+            document.addEventListener('contextmenu', function(e) {
+                // 检查事件源是否为图片或图片容器
+                if (e.target.tagName === 'IMG' || e.target.classList.contains('gallery-item') || 
+                    e.target.closest('.gallery-item')) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // 防止长按事件(移动端)
+            document.addEventListener('touchstart', function(e) {
+                if (e.target.tagName === 'IMG' || e.target.classList.contains('gallery-item') || 
+                    e.target.closest('.gallery-item')) {
+                    // 添加长按标志
+                    e.target.longPress = false;
+                    e.target.longPressTimer = setTimeout(function() {
+                        e.target.longPress = true;
+                    }, 500);
+                }
+            }, { passive: false });
+            
+            document.addEventListener('touchend', function(e) {
+                if (e.target.tagName === 'IMG' || e.target.classList.contains('gallery-item') || 
+                    e.target.closest('.gallery-item')) {
+                    clearTimeout(e.target.longPressTimer);
+                    if (e.target.longPress) {
+                        e.preventDefault();
+                        return false;
+                    }
+                }
+            }, { passive: false });
+            
+            document.addEventListener('touchmove', function(e) {
+                if (e.target.tagName === 'IMG' || e.target.classList.contains('gallery-item') || 
+                    e.target.closest('.gallery-item')) {
+                    clearTimeout(e.target.longPressTimer);
+                }
+            }, { passive: true });
         });
     </script>
 </body>
