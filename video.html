@@ -37,6 +37,72 @@
             height: 100%;
             border: 0;
         }
+        
+        /* 链接阻止层样式 */
+        .link-blocker-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .link-blocker-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .link-blocker-message {
+            background: #fff;
+            color: #000;
+            padding: 20px 30px;
+            border-radius: 4px;
+            max-width: 90%;
+            text-align: center;
+            font-size: 1.1rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            animation: messageAppear 0.3s forwards;
+        }
+        
+        @keyframes messageAppear {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        /* 防止右键菜单 */
+        .video-wrapper {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        
+        /* 防止视频互动区域移动 */
+        .video-interaction-blocker {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            /* 允许点击通过到视频区域,但阻止拖拽等操作 */
+            pointer-events: none;
+        }
+        
+        /* 视频结束保护层样式 */
+        .video-end-protection-overlay {
+            background: transparent;
+            pointer-events: auto;
+            z-index: 1000;
+        }
     </style>
 </head>
 <body class="video-page page-transition">
@@ -47,10 +113,18 @@
             <p class="video-description">Performance at the Future Stars Concert Series, Huabin Opera House, Beijing</p>
             
             <div class="video-wrapper">
-                <iframe src="https://www.youtube.com/embed/7NrO3vBjsos" title="Yuze Pan - Classical Guitar Performance" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                <iframe src="https://www.youtube-nocookie.com/embed/7NrO3vBjsos?rel=0&showinfo=0&modestbranding=1&controls=1&disablekb=1&fs=1&iv_load_policy=3&hl=en&cc_load_policy=0&color=white&si=ySLLulDdZ9ryJWZO" title="Yuze Pan - Classical Guitar Performance" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                <div class="video-interaction-blocker"></div>
             </div>
         </div>
     </section>
+    
+    <!-- 链接阻止提示框 -->
+    <div class="link-blocker-overlay" id="linkBlockerOverlay">
+        <div class="link-blocker-message">
+            External links are not allowed.
+        </div>
+    </div>
     
     <!-- 导航栏 -->
     <div class="nav-bar">
@@ -80,34 +154,120 @@
     <!-- 脚本 -->
     <script src="static/js/player.js"></script>
     <script src="static/js/protection.js"></script>
+    <script src="static/js/video-protection.js"></script>
+    
+    <!-- 页面过渡动画脚本 -->
     <script>
         // 页面加载时的平滑过渡动画
         document.addEventListener('DOMContentLoaded', () => {
             // 确保在视频页面上导航栏位置正确
             document.body.classList.add('video-page');
             
-            // 获取视频元素
-            const videoElement = document.querySelector('video');
+            // 允许的链接列表
+            const allowedUrls = [
+                'https://www.youtube.com/channel/UCSyJvU1NWamcfSkOAdE3hhQ?embeds_referring_euri=https%3A%2F%2Fyuzeguitar.us.kg%2F&source_ve_path=MzY5MjU',
+                'https://www.youtube.com/channel/UCSyJvU1NWamcfSkOAdE3hhQ',
+                'https://www.youtube.com/watch?time_continue=1&v=7NrO3vBjsos&embeds_referring_euri=https%3A%2F%2Fyuzeguitar.us.kg%2F&source_ve_path=Mjg2NjUsMjg2NjQsMjg2NjY',
+                'https://www.youtube.com/watch?v=7NrO3vBjsos&t=1s&ab_channel=jerry_guitarist',
+                'https://yuzeguitar.us.kg/gallery.html',
+                'https://yuzeguitar.us.kg/index.html#profile',
+                'https://yuzeguitar.us.kg/index.html#hero',
+                'https://yuzeguitar.us.kg/',
+                'https://yuzeguitar.us.kg/video.html',
+                'https://yuzeguitar.us.kg/contact.html'
+            ];
             
-            // 添加视频的空格键控制
-            if (videoElement) {
-                // 阻止全局空格键事件在视频页面触发音频播放器
-                document.addEventListener('keydown', function(e) {
-                    if (e.code === 'Space' || e.keyCode === 32) {
-                        e.preventDefault();
-                        
-                        // 切换视频播放状态
-                        if (videoElement.paused) {
-                            videoElement.play();
-                        } else {
-                            videoElement.pause();
-                        }
-                        
-                        // 阻止事件冒泡,防止触发音频播放器
-                        return false;
-                    }
-                }, true); // 使用捕获阶段处理事件
+            // 简化版本的URL用于匹配(不含协议)
+            const simplifiedAllowedUrls = allowedUrls.map(url => {
+                return url.replace(/^https?:\/\//, '');
+            });
+            
+            // 获取链接阻止提示框
+            const linkBlockerOverlay = document.getElementById('linkBlockerOverlay');
+            
+            // 显示链接阻止提示框的函数
+            function showLinkBlocker() {
+                linkBlockerOverlay.classList.add('active');
+                setTimeout(() => {
+                    linkBlockerOverlay.classList.remove('active');
+                }, 2000);
             }
+            
+            // 阻止右键菜单
+            document.addEventListener('contextmenu', function(e) {
+                const videoWrapper = document.querySelector('.video-wrapper');
+                if (videoWrapper && videoWrapper.contains(e.target)) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // 监听beforeunload事件,检查导航是否合法
+            window.addEventListener('beforeunload', function(e) {
+                // 只检查由用户点击触发的导航(window.navigation仅在较新的浏览器中支持)
+                if (window.navigation && window.navigation.currentEntry && window.navigation.currentEntry.navigationType === 'navigate') {
+                    const destinationUrl = window.location.href;
+                    
+                    // 检查是否是允许的URL
+                    const isAllowed = allowedUrls.some(url => destinationUrl.startsWith(url)) || 
+                                      simplifiedAllowedUrls.some(url => destinationUrl.replace(/^https?:\/\//, '').startsWith(url));
+                    
+                    if (!isAllowed) {
+                        // 阻止导航并刷新当前页面
+                        e.preventDefault();
+                        e.returnValue = '';
+                        return '';
+                    }
+                }
+            });
+            
+            // 拦截所有点击事件
+            document.addEventListener('click', function(e) {
+                // 检查是否点击了链接
+                const link = e.target.closest('a');
+                if (!link) return;
+                
+                const href = link.getAttribute('href');
+                
+                // 如果链接是空的或者是锚点链接,允许跳转
+                if (!href || href.startsWith('#')) return;
+                
+                // 检查是否是允许的链接
+                const isAllowed = allowedUrls.some(url => href === url) || 
+                                  simplifiedAllowedUrls.some(url => href.replace(/^https?:\/\//, '') === url) ||
+                                  href.startsWith('index.html') ||
+                                  href === 'gallery.html' ||
+                                  href === 'video.html' ||
+                                  href === 'contact.html';
+                
+                if (!isAllowed) {
+                    // 如果不是允许的链接,阻止默认行为并显示提示
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showLinkBlocker();
+                    return false;
+                }
+            }, true);
+            
+            // 处理iframe的消息传递
+            window.addEventListener('message', function(event) {
+                // 只允许来自YouTube的消息
+                if (event.origin.includes('youtube.com') || event.origin.includes('youtube-nocookie.com')) {
+                    // 检查消息内容,查找可能指示导航的事件
+                    if (event.data && typeof event.data === 'string') {
+                        try {
+                            const data = JSON.parse(event.data);
+                            // 如果是导航相关的消息,可能需要阻止
+                            if (data.event === 'navigate' || data.event === 'infoDelivery') {
+                                // 不采取任何操作,这样可以防止某些导航行为
+                                // 注意:这可能不会拦截所有的导航尝试,因为YouTube不一定会发送这些消息
+                            }
+                        } catch (e) {
+                            // 如果解析失败,忽略这个消息
+                        }
+                    }
+                }
+            });
             
             // 为所有返回到普通页面的链接添加反向过渡类
             const normalPageLinks = document.querySelectorAll('a[href^="index.html"], a[href^="contact.html"]');
@@ -136,6 +296,38 @@
                     }
                 });
             });
+            
+            // 对iframe进行进一步的保护
+            const youtubeIframe = document.querySelector('iframe');
+            
+            // 修改iframe的属性,限制其功能
+            if (youtubeIframe) {
+                // 添加更多限制参数(如果需要的话)
+                let src = youtubeIframe.getAttribute('src');
+                
+                // 确保已经包含了需要的参数
+                if (!src.includes('origin=')) {
+                    // 添加origin参数,限制消息来源
+                    src += '&origin=' + encodeURIComponent(window.location.origin);
+                    youtubeIframe.setAttribute('src', src);
+                }
+                
+                // 使用MutationObserver监控iframe src的变化
+                const observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.type === 'attributes' && mutation.attributeName === 'src') {
+                            const newSrc = youtubeIframe.getAttribute('src');
+                            // 如果src属性被修改为不允许的值,则恢复原始值
+                            if (!newSrc.includes('youtube-nocookie.com')) {
+                                youtubeIframe.setAttribute('src', src);
+                            }
+                        }
+                    });
+                });
+                
+                // 开始观察iframe元素
+                observer.observe(youtubeIframe, { attributes: true });
+            }
         });
     </script>
 </body>
