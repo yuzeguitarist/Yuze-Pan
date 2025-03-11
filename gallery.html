@@ -160,10 +160,17 @@
             .gallery-grid {
                 grid-template-columns: 1fr;
                 gap: 1.5rem;
+                justify-items: center; /* 确保网格子项居中 */
             }
             
             .gallery-container {
                 padding: 0 1rem;
+            }
+            
+            .gallery-item {
+                width: 100%; /* 确保项目宽度100% */
+                max-width: 320px; /* 设置最大宽度以确保不会太宽 */
+                margin: 0 auto; /* 左右自动边距实现居中 */
             }
             
             .gallery-item-title {
