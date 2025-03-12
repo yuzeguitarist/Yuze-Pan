@@ -256,9 +256,24 @@
         
         // 监听页面离开尝试
         window.addEventListener('beforeunload', function(e) {
-            const destinationUrl = document.activeElement.href;
+            // 检查是否是内部导航
+            const activeElement = document.activeElement;
+            if (activeElement && activeElement.tagName === 'A') {
+                const href = activeElement.getAttribute('href');
+                // 如果是内部链接,不显示提示
+                if (href && (
+                    href.startsWith('index.html') || 
+                    href === 'gallery.html' || 
+                    href === 'video.html' || 
+                    href === 'contact.html' ||
+                    href.startsWith('#')
+                )) {
+                    return;
+                }
+            }
             
-            // 如果有目标URL且不在允许列表中
+            // 如果是外部链接,显示提示
+            const destinationUrl = activeElement.href;
             if (destinationUrl && !isUrlAllowed(destinationUrl)) {
                 e.preventDefault();
                 e.returnValue = '';
