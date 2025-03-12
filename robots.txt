@@ -47,4 +47,4 @@ Disallow:
 # 如有任何问题请联系: panyuzepan6@gmail.com
 
 # 在robots.txt中添加sitemap引用
-Sitemap: https://yuzeguitar.us.kg/sitemap.xml
+Sitemap: https://yuzeguitar.site/sitemap.xml
