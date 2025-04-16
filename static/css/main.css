@@ -2,10 +2,41 @@
     --primary-color: #000;
     --secondary-color: #fff;
     --accent-color: #e5d5c0;
+    --divider-color-strong: rgba(255, 255, 255, 0.6);
+    --divider-color-weak: rgba(255, 255, 255, 0.2);
+    --link-bg: rgba(255, 255, 255, 0.05);
+    --link-bg-hover: rgba(255, 255, 255, 0.1);
+    --nav-bg: rgba(0, 0, 0, 0.95);
+    --nav-border: rgba(255, 255, 255, 0.05);
+    --nav-item-hover: rgba(255, 255, 255, 0.7);
+    --player-bg: rgba(20, 20, 20, 0.95);
+    --icon-prev: url('https://img.icons8.com/ios-filled/50/ffffff/rewind.png');
+    --icon-play: url('https://img.icons8.com/ios-filled/50/ffffff/play.png');
+    --icon-pause: url('https://img.icons8.com/ios-filled/50/ffffff/pause.png');
+    --icon-next: url('https://img.icons8.com/ios-filled/50/ffffff/fast-forward.png');
     --nav-height: 60px;
     --player-height: 60px;
     --transition-speed: 0.3s;
     --font-main: "Cormorant Garamond", serif;
+}
+
+/* 为浅色主题定义变量 */
+html[data-theme='light'] {
+    --primary-color: #F5F4ED;
+    --secondary-color: #000000;
+    --accent-color: #A0522D;
+    --divider-color-strong: rgba(0, 0, 0, 0.6);
+    --divider-color-weak: rgba(0, 0, 0, 0.2);
+    --link-bg: rgba(0, 0, 0, 0.05);
+    --link-bg-hover: rgba(0, 0, 0, 0.1);
+    --nav-bg: rgba(245, 244, 237, 0.9);
+    --nav-border: rgba(0, 0, 0, 0.1);
+    --nav-item-hover: rgba(0, 0, 0, 0.7);
+    --player-bg: rgba(245, 244, 237, 0.9);
+    --icon-prev: url('https://img.icons8.com/ios-filled/50/000000/rewind.png');
+    --icon-play: url('https://img.icons8.com/ios-filled/50/000000/play.png');
+    --icon-pause: url('https://img.icons8.com/ios-filled/50/000000/pause.png');
+    --icon-next: url('https://img.icons8.com/ios-filled/50/000000/fast-forward.png');
 }
 
 * {
@@ -61,7 +92,7 @@ body {
 
 /* === 简历部分 === */
 .profile-section {
-    padding: 8rem 0;
+    padding: 4rem 0;
     background: var(--primary-color);
     position: relative;
 }
@@ -116,9 +147,9 @@ body {
     height: 1px;
     background: linear-gradient(
         to var(--direction, right),
-        rgba(255, 255, 255, 0.6) 0%,
-        rgba(255, 255, 255, 0.2) 80%,
-        rgba(255, 255, 255, 0) 100%
+        var(--divider-color-strong) 0%,
+        var(--divider-color-weak) 80%,
+        rgba(0, 0, 0, 0) 100%
     );
     flex-grow: 1;
     max-width: 220px;
@@ -137,7 +168,7 @@ body {
     width: 5px;
     height: 5px;
     border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.6);
+    background-color: var(--divider-color-strong);
     margin: 0 15px;
 }
 
@@ -157,14 +188,14 @@ body {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--link-bg);
     transition: transform var(--transition-speed) ease, 
                 background var(--transition-speed) ease;
 }
 
 .social-link:hover {
     transform: scale(1.1);
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--link-bg-hover);
 }
 
 .social-link svg {
@@ -179,7 +210,7 @@ body {
     bottom: var(--player-height);
     width: 100%;
     height: var(--nav-height);
-    background: rgba(0, 0, 0, 0.95);
+    background: var(--nav-bg);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     display: flex;
@@ -188,7 +219,7 @@ body {
     align-items: center;
     padding: 0 3rem;
     z-index: 1000;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid var(--nav-border);
     transition: transform 0.4s ease, bottom 0.4s ease, opacity 0.4s ease;
 }
 
@@ -222,7 +253,7 @@ body {
 }
 
 .nav-item:hover {
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--nav-item-hover);
 }
 
 .nav-item::after {
@@ -248,14 +279,16 @@ body {
     bottom: 0;
     width: 100%;
     height: var(--player-height);
-    background: rgba(20, 20, 20, 0.95);
+    background: var(--player-bg);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 3rem;
     z-index: 1000;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    transition: transform 0.4s ease, bottom 0.4s ease, opacity 0.4s ease;
+    border-top: 1px solid var(--nav-border);
+    transition: transform 0.4s ease, bottom 0.4s ease, opacity 0.4s ease, background var(--transition-speed) ease;
 }
 
 .player-controls {
@@ -268,7 +301,7 @@ body {
 .player-btn {
     background: none;
     border: none;
-    color: white;
+    color: var(--secondary-color);
     cursor: pointer;
     transition: opacity 0.3s ease;
     opacity: 0.85;
@@ -297,7 +330,7 @@ body {
 }
 
 .play-btn {
-    background-image: url('https://img.icons8.com/ios-filled/50/ffffff/play.png');
+    background-image: var(--icon-play);
     width: 28px;
     height: 28px;
     background-size: contain;
@@ -306,7 +339,7 @@ body {
 }
 
 .play-btn.playing {
-    background-image: url('https://img.icons8.com/ios-filled/50/ffffff/pause.png');
+    background-image: var(--icon-pause);
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
@@ -314,7 +347,7 @@ body {
 
 /* 使用图片替代Unicode字符 */
 .prev-btn {
-    background-image: url('https://img.icons8.com/ios-filled/50/ffffff/rewind.png');
+    background-image: var(--icon-prev);
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
@@ -323,7 +356,7 @@ body {
 }
 
 .next-btn {
-    background-image: url('https://img.icons8.com/ios-filled/50/ffffff/fast-forward.png');
+    background-image: var(--icon-next);
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
@@ -347,7 +380,8 @@ body {
     gap: 0.3rem;
     font-size: 1rem;
     letter-spacing: 0.5px;
-    color: white;
+    color: var(--secondary-color);
+    transition: color var(--transition-speed) ease;
 }
 
 .track-name {
@@ -887,7 +921,7 @@ body {
     
     /* 调整控制区域间距 */
     .player-controls {
-        gap: 0.8rem;
+        gap: 1.2rem;
     }
     
     body.video-page .nav-bar {
@@ -941,13 +975,14 @@ html {
 
 /* 在iOS设备上的特殊修复 */
 @supports (-webkit-touch-callout: none) {
-    .player-btn {
+    /* 移除这两行,以允许背景图片显示 */
+    /* .player-btn {
         background: none;
-    }
+    } */
     
-    .play-btn {
+    /* .play-btn {
         background: none;
-    }
+    } */
 }
 
 /* 空格键按下的视觉反馈 */
@@ -1106,4 +1141,10 @@ body.video-page .nav-bar {
     .nav-menu {
         gap: 2rem;
     }
+}
+
+/* Gallery Overlay Text Color for Light Theme */
+html[data-theme='light'] .gallery-item-title,
+html[data-theme='light'] .gallery-item-description {
+    color: #F5F4ED; /* 浅色主题下,覆盖层文字改为深灰色 */
 } 
