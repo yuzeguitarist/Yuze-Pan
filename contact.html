@@ -3,19 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 提前执行主题设置,防止闪烁 -->
+    <script>
+      (function() {
+        const now = new Date();
+        const hour = now.getHours();
+        const minute = now.getMinutes();
+        const isDayTime = (hour > 6 || (hour === 6 && minute >= 30)) && hour < 18;
+        const theme = isDayTime ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', theme);
+        // console.log('Inline script set theme:', theme); // 调试用
+      })();
+    </script>
     <title>Contact - Yuze Pan | Classical Guitarist</title>
     <link href="static/css/main.css" rel="stylesheet">
     <link href="static/css/protection.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="icon" href="static/images/favicon.ico" type="image/x-icon">
     <style>
-        /* 播放器栏样式覆盖 */
-        。player-bar {
-            background: #121212 !important; /* 不透明的灰色背景 */
-            backdrop-filter: none !important; /* 移除模糊效果 */
-            -webkit-backdrop-filter: none !important; /* 移除模糊效果 (Safari) */
-        }
+        /* 移除播放器栏样式覆盖,让 CSS 变量生效 */
+        /* .player-bar {
+            background: #121212 !important; 
+            backdrop-filter: none !important; 
+            -webkit-backdrop-filter: none !important; 
+        } */
     </style>
+    <script src="static/js/theme-switcher.js" defer></script>
 </head>
 <body class="page-transition">
     <!-- 联系页面 -->
@@ -44,9 +57,9 @@
     <!-- 播放器栏 -->
     <div class="player-bar">
         <div class="player-controls">
-            <button class="player-btn prev-btn" aria-label="上一首" style="background-image: url('https://img.icons8.com/ios-filled/50/ffffff/rewind.png'); background-size: contain; background-position: center; background-repeat: no-repeat;"></button>
-            <button class="player-btn play-btn" aria-label="播放/暂停" style="background-image: url('https://img.icons8.com/ios-filled/50/ffffff/play.png'); background-size: contain; background-position: center; background-repeat: no-repeat;"></button>
-            <button class="player-btn next-btn" aria-label="下一首" style="background-image: url('https://img.icons8.com/ios-filled/50/ffffff/fast-forward.png'); background-size: contain; background-position: center; background-repeat: no-repeat;"></button>
+            <button class="player-btn prev-btn" aria-label="上一首"></button>
+            <button class="player-btn play-btn" aria-label="播放/暂停"></button>
+            <button class="player-btn next-btn" aria-label="下一首"></button>
         </div>
         <div class="player-info">
             <span class="track-name"></span>
