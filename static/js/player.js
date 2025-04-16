@@ -91,7 +91,10 @@ class AudioPlayer {
         this.trackTime = document.querySelector('.track-time');
 
         // 添加事件监听
-        this.playBtn.addEventListener('click', () => this.togglePlay());
+        this.playBtn.addEventListener('click', () => {
+            console.log('[DEBUG] Play button clicked via event listener. Calling togglePlay().'); // 添加日志
+            this.togglePlay();
+        });
         this.prevBtn.addEventListener('click', () => this.prevTrack());
         this.nextBtn.addEventListener('click', () => this.nextTrack());
         this.audioElement.addEventListener('timeupdate', () => this.updateTime());
@@ -128,10 +131,13 @@ class AudioPlayer {
     }
 
     play() {
+        console.log('[DEBUG] play() method entered.'); // 添加日志
         // 使用CSS类来更改播放按钮样式
         this.playBtn.classList.add('playing');
-        // 直接设置背景图片,确保在所有设备上都能显示
-        this.playBtn.style.backgroundImage = "url('https://img.icons8.com/ios-filled/50/ffffff/pause.png')";
+        console.log('[DEBUG] play() - Added "playing" class.'); // 添加日志
+        // 直接设置背景图片,确保在所有设备上都能显示 <-- 不再需要,由 CSS 控制
+        // this.playBtn.style.backgroundImage = "url('https://img.icons8.com/ios-filled/50/ffffff/pause.png')";
+        console.log('[DEBUG] play() - Checked for direct style setting (should be commented out).'); // 添加日志
         
         const playPromise = this.audioElement.play();
         
@@ -164,10 +170,13 @@ class AudioPlayer {
     }
 
     pause() {
+        console.log('[DEBUG] pause() method entered.'); // 添加日志
         // 使用CSS类来更改播放按钮样式
         this.playBtn.classList.remove('playing');
-        // 直接设置背景图片,确保在所有设备上都能显示
-        this.playBtn.style.backgroundImage = "url('https://img.icons8.com/ios-filled/50/ffffff/play.png')";
+        console.log('[DEBUG] pause() - Removed "playing" class.'); // 添加日志
+        // 直接设置背景图片,确保在所有设备上都能显示 <-- 不再需要,由 CSS 控制
+        // this.playBtn.style.backgroundImage = "url('https://img.icons8.com/ios-filled/50/ffffff/play.png')";
+        console.log('[DEBUG] pause() - Checked for direct style setting (should be commented out).'); // 添加日志
         this.audioElement.pause();
         this.isPlaying = false;
     }
